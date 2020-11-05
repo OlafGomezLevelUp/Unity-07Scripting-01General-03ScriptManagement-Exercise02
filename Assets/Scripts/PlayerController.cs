@@ -3,31 +3,38 @@
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 5;
+    private MovementBase playerBehaviour;
 
     [SerializeField]
-    private Rigidbody _projectil;
+    private Rigidbody projectil;
 
-    [SerializeField]
-    private float _projectileForce = 20;
+    private void Awake()
+    {
+        playerBehaviour = GetComponent<MovementBase>();
+    }
 
     private void Update()
     {
         var horizontal = Input.GetAxis("Horizontal");
         var vertical = Input.GetAxis("Vertical");
-        var direction = new Vector3(horizontal, vertical, 0);
-        transform.Translate(direction * _speed * Time.deltaTime);
+
+        if (horizontal != 0 || vertical != 0)
+        {
+            playerBehaviour.Move(horizontal, vertical);
+        }
 
         if (Input.GetButtonDown("Fire1"))
         {
-            var projectile = Instantiate(_projectil, transform.position, Quaternion.identity);
-            var mouseInput = Input.mousePosition;
-            mouseInput.z = 10;
-            var mousePosition = Camera.main.ScreenToWorldPoint(mouseInput);
-            mousePosition.z = 0;
-            var projectileDelta = mousePosition - transform.position;
-            projectile.AddForce(projectileDelta.normalized * _projectileForce);
+            CreateBullet();
+
         }
     }
 
+    private void CreateBullet()
+    {
+        Instantiate(projectil, transform.position, Quaternion.identity);
+    }
 }
+
+
+
